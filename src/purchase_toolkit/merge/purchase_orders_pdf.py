@@ -36,7 +36,7 @@ class PurchaseOrderPdfMerger:
         return match.group(1) if match else None
 
     def merge(self, source_folder: Path, destination_folder: Path) -> None:
-        """Agrupa y unifica los PDF de `source_folder` en un archivo por orden de compra.
+        """Agrupa los PDF de `source_folder` en un archivo por orden de compra.
 
         Los archivos se agrupan por número de orden (ver `get_order_number`).
         Dentro de cada grupo, el archivo base de la orden (sin sufijo) queda
@@ -61,14 +61,21 @@ class PurchaseOrderPdfMerger:
             for file in source_folder.iterdir()
             if file.is_file() and file.suffix.lower() == ".pdf"
         ]
-        logger.info("Se encontraron %d archivos PDF en %s", len(pdf_files), source_folder)
+        logger.info(
+            "Se encontraron %d archivos PDF en %s",
+            len(pdf_files),
+            source_folder,
+        )
 
         order_groups: dict[str, list[Path]] = {}
         skipped_count = 0
         for file in pdf_files:
             order_number = self.get_order_number(file.name)
             if order_number is None:
-                logger.warning("Archivo ignorado, no matchea el patrón de orden: %s", file.name)
+                logger.warning(
+                    "Archivo ignorado, no matchea el patrón de orden: %s",
+                    file.name,
+                )
                 skipped_count += 1
                 continue
             order_groups.setdefault(order_number, []).append(file)
@@ -96,7 +103,7 @@ class PurchaseOrderPdfMerger:
             )
 
         logger.info(
-            "Unificación completa: %d orden(es) de compra procesadas, %d archivo(s) ignorados.",
+            "Unificación completa: %d orden(es) procesadas, %d archivo(s) ignorados.",
             len(order_groups),
             skipped_count,
         )

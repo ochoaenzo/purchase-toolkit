@@ -9,7 +9,11 @@ from pypdf import PdfReader, PdfWriter
 from purchase_toolkit.merge.purchase_orders_pdf import PurchaseOrderPdfMerger
 
 
-def _make_pdf(path: Path, num_pages: int = 1, page_size: tuple[int, int] = (200, 200)) -> None:
+def _make_pdf(
+    path: Path,
+    num_pages: int = 1,
+    page_size: tuple[int, int] = (200, 200),
+) -> None:
     """Genera un PDF sintético con la cantidad de páginas y tamaño indicados."""
     writer = PdfWriter()
     width, height = page_size

@@ -49,11 +49,14 @@ class ObservationsExtractor:
 
                 if key in fields:
                     logger.warning(
-                        "Clave duplicada '%s', se conserva el último valor encontrado: %s",
+                        "Clave duplicada '%s', se conserva el último valor: %s",
                         key,
                         value,
                     )
                 fields[key] = value
 
-        logger.info("Se extrajeron %d campo(s) del texto de Observaciones.", len(fields))
+        logger.info(
+            "Se extrajeron %d campo(s) del texto de Observaciones.",
+            len(fields),
+        )
         return fields
