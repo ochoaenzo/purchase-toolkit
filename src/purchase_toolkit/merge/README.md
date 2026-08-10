@@ -89,14 +89,22 @@ El método `merge` lanza `FileNotFoundError` si `source_folder` no existe. No se
 
 ## Referencia de la API
 
-`PurchaseOrderPdfMerger(order_number_pattern: str = r"^(\d{5})")`
+### `PurchaseOrderPdfMerger`
+
+```python
+PurchaseOrderPdfMerger(order_number_pattern: str = r"^(\d{5})")
+```
 
 Constructor. Recibe el patrón usado para extraer el número de orden del nombre de archivo.
 
-`get_order_number(filename: str) -> str | None`
+```python
+get_order_number(filename: str) -> str | None
+```
 
 Extrae el número de orden de compra de un nombre de archivo. Devuelve `None` si no matchea el patrón configurado.
 
-`merge(source_folder: Path, destination_folder: Path) -> None`
+```python
+merge(source_folder: Path, destination_folder: Path) -> None
+```
 
 Agrupa y unifica los PDF de `source_folder` en un archivo por orden de compra dentro de `destination_folder`. Lanza `FileNotFoundError` si `source_folder` no existe.
