@@ -8,7 +8,7 @@ Antes de este proyecto, el circuito de aprobación de órdenes de compra depend�
 
 Hoy se dispone de backup digital no solo de la orden de compra en sí, sino también de su autorización, presupuestos y cualquier otra información relevante — todo unificado en un único archivo por orden.
 
-Además, contar con datos estructurados dentro de cada orden abrió la puerta a automatizar otras tareas que antes no eran viables. Algunos ejemplos de lo que esto permite hoy:
+Además, disponer de datos estructurados dentro de cada orden hizo posible automatizar otras tareas que antes no eran viables. Algunos ejemplos de lo que esto permite hoy:
 
 - Detalle de órdenes de compra con pagos anticipados.
 - Detalle de órdenes de compra correspondientes a servicios recurrentes (abonos), con la posibilidad de cruzarlas automáticamente contra otros reportes del sistema.
