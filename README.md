@@ -4,16 +4,24 @@ Conjunto de librerías de Python para digitalizar y dar trazabilidad al circuito
 
 ## Contexto
 
-Antes de este proyecto, el circuito de aprobación de órdenes de compra dependía enteramente de la revisión manual de las órdenes de compra y su información anexa: sin backup digital estructurado, sin forma sistemática de cruzar lo que se estaba por autorizar contra lo realmente exportado del ERP.
+### Antes
 
-Hoy se dispone de backup digital no solo de la orden de compra en sí, sino también de su autorización, presupuestos y cualquier otra información relevante — todo unificado en un único archivo por orden.
+El circuito de aprobación de órdenes de compra dependía enteramente de la revisión manual de las órdenes de compra y su información anexa — sin backup digital estructurado, sin forma sistemática de cruzar lo que se estaba por autorizar contra lo realmente exportado del ERP.
 
-Además, disponer de datos estructurados dentro de cada orden hizo posible automatizar otras tareas que antes no eran viables. Algunos ejemplos de lo que esto permite hoy:
+### Ahora
+
+Se dispone de backup digital no solo de la orden de compra en sí, sino también de su autorización, presupuestos y cualquier otra información relevante — todo unificado en un único archivo por orden.
+
+### Posibilidades ampliadas
+
+Disponer de datos estructurados dentro de cada orden, además, hizo posible automatizar otras tareas que antes no eran viables, como:
 
 - Detalle de órdenes de compra con pagos anticipados.
 - Detalle de órdenes de compra correspondientes a servicios recurrentes (abonos), con la posibilidad de cruzarlas automáticamente contra otros reportes del sistema.
 
-`purchase-toolkit` reemplaza ese proceso manual por un conjunto de herramientas independientes que:
+## Qué hace
+
+`purchase-toolkit` reemplaza ese proceso manual con un conjunto de herramientas independientes que:
 
 - Verifican la integridad de los datos exportados del ERP antes de que un error se propague a etapas posteriores.
 - Extraen, de forma agnóstica al caso de uso, todos los campos estructurados embebidos en cada orden (tipo de operación, tipo de cambio, condiciones de pago, presupuesto asociado), para que cualquier análisis posterior parta de la misma fuente de datos confiable.
