@@ -1,5 +1,7 @@
 # purchase-toolkit
 
+[![CI](https://github.com/ochoaenzo/purchase-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/ochoaenzo/purchase-toolkit/actions/workflows/ci.yml)
+
 Conjunto de librerías de Python para digitalizar y dar trazabilidad al circuito de órdenes de compra: auditoría de datos fuente, extracción de campos estructurados y unificación de documentos de respaldo.
 
 ## Contexto
