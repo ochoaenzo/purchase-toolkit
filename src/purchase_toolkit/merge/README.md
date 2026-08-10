@@ -25,6 +25,11 @@ merger.merge(
 
 Esto toma todos los archivos `.pdf` de `source_folder`, los agrupa por número de orden de compra, y escribe un archivo `<numero_de_orden>.pdf` por cada grupo en `destination_folder`. Si `destination_folder` no existe, se crea automáticamente.
 
+## Ejemplos completos
+
+- [`examples/merge_usage.py`](../../../examples/merge_usage.py) — para correr localmente, con el paquete ya instalado.
+- [`examples/merge_example.ipynb`](../../../examples/merge_example.ipynb) — para correr en Google Colab, sin instalar nada en tu máquina.
+
 ## Comportamiento
 
 ### Agrupamiento
