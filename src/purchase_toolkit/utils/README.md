@@ -1,6 +1,6 @@
 # utils
 
-Utilidades genéricas de manejo de archivos PDF, de uso interno para `merge`, `extract` y `audit`. No expone funcionalidad propia ni figura en la tabla de "Módulos" del [README raíz](../../../README.md).
+Utilidades genéricas de manejo de archivos PDF, de uso interno para `merge`, `extract` y `audit`. No expone funcionalidad propia ni figura en la tabla de "Módulos" del [README principal](../../../README.md).
 
 `merge`, `extract` y `audit` importan de `utils`; no se importan entre sí — ver [principio de diseño](../../../README.md#principio-de-diseño).
 

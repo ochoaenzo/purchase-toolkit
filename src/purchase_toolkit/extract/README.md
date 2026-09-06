@@ -123,7 +123,7 @@ resultados = extractor.extract_from_folder(Path("ordenes/"))
 
 #### Número de orden
 
-El número de orden se extrae del nombre de archivo con [`purchase_toolkit.utils.get_order_number`](../utils/README.md#referencia-de-la-api), la misma función que usa [`merge`](../merge/README.md#extensión), con el mismo patrón por defecto — configurable vía `order_number_pattern`.
+El número de orden se extrae del nombre de archivo con [`purchase_toolkit.utils.pdf.get_order_number`](../utils/README.md#referencia-de-la-api), la misma función que usa [`merge`](../merge/README.md#extensión), con el mismo patrón por defecto — configurable vía `order_number_pattern`.
 
 #### Procesamiento por carpeta
 
