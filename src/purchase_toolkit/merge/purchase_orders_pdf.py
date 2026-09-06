@@ -1,10 +1,18 @@
 """Unificación de archivos PDF individuales de una misma orden de compra."""
 
 import logging
-import re
 from pathlib import Path
 
 from pypdf import PdfReader, PdfWriter
+
+from purchase_toolkit.utils.pdf import (
+    ensure_folder_created,
+    ensure_folder_exists,
+    list_pdf_files,
+)
+from purchase_toolkit.utils.pdf import (
+    get_order_number as get_order_number_from_filename,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -32,8 +40,7 @@ class PurchaseOrderPdfMerger:
             El número de orden como string, o None si el nombre no matchea
             el patrón configurado.
         """
-        match = re.match(self._order_number_pattern, filename)
-        return match.group(1) if match else None
+        return get_order_number_from_filename(filename, self._order_number_pattern)
 
     def merge(self, source_folder: Path, destination_folder: Path) -> None:
         """Agrupa los PDF de `source_folder` en un archivo por orden de compra.
@@ -51,16 +58,10 @@ class PurchaseOrderPdfMerger:
         Raises:
             FileNotFoundError: si `source_folder` no existe.
         """
-        if not source_folder.exists():
-            raise FileNotFoundError(f"La carpeta de origen no existe: {source_folder}")
+        ensure_folder_exists(source_folder)
+        ensure_folder_created(destination_folder)
 
-        destination_folder.mkdir(parents=True, exist_ok=True)
-
-        pdf_files = [
-            file
-            for file in source_folder.iterdir()
-            if file.is_file() and file.suffix.lower() == ".pdf"
-        ]
+        pdf_files = list_pdf_files(source_folder)
         logger.info(
             "Se encontraron %d archivos PDF en %s",
             len(pdf_files),

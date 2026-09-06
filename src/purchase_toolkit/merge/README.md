@@ -56,7 +56,7 @@ merger = PurchaseOrderPdfMerger(order_number_pattern=r"^([A-Z]{2}\d{3})")
 
 El patrón debe ser una expresión regular con un único grupo de captura correspondiente al número de orden.
 
-También se puede usar el método `get_order_number` de forma aislada, sin llamar a `merge`, para simplemente extraer el número de orden de un nombre de archivo:
+El método `get_order_number` también puede usarse de forma aislada, sin llamar a `merge`, para extraer el número de orden de un nombre de archivo:
 
 ```python
 merger.get_order_number("25305_auth.pdf")  # "25305"
