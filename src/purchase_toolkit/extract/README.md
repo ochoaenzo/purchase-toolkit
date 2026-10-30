@@ -121,23 +121,25 @@ resultados = extractor.extract_from_folder(Path("ordenes/"))
 
 `find_observations_text` recorre línea por línea el texto completo extraído del PDF y conserva únicamente las que empiezan y terminan con el separador de campo (`|` por defecto) — el resto del contenido del PDF (razón social, montos, etc.) se descarta antes de llegar a `ObservationsExtractor`. Si ninguna línea matchea, devuelve una cadena vacía y registra una advertencia.
 
-#### Número de orden
+#### Selección de los PDF de órdenes de compra
 
-El número de orden se extrae del nombre de archivo con [`purchase_toolkit.utils.pdf.get_order_number`](../utils/README.md#referencia-de-la-api), la misma función que usa [`merge`](../merge/README.md#extensión), con el mismo patrón por defecto — configurable vía `order_number_pattern`.
+Solo se procesan los PDF de órdenes de compra, no todos los PDF de la carpeta. El PDF de una orden se reconoce por su nombre de archivo, con [`purchase_toolkit.utils.pdf.get_order_number`](../utils/README.md#referencia-de-la-api) (la misma función que usa [`merge`](../merge/README.md#extensión)) y el patrón configurado vía `order_number_pattern`.
+
+El patrón por defecto, `(?i)^(\d{5})\.pdf$`, matchea únicamente el archivo base de la orden: un número de 5 dígitos seguido directamente de la extensión (`10001.pdf`). Los archivos de respaldo con sufijo (`10001_auth.pdf`, `10001_ppto.pdf`) y cualquier otro PDF quedan afuera. A diferencia de `merge`, que con `^(\d{5})` toma también los respaldos para unirlos, `extract` solo necesita el PDF de la orden emitida, que es el que contiene el texto de Observaciones.
 
 #### Procesamiento por carpeta
 
-`extract_from_folder` agrupa el resultado por número de orden. Un archivo cuyo nombre no matchea el patrón configurado se ignora y queda registrado en el log como advertencia, igual que en `merge`.
+`extract_from_folder` agrupa el resultado por número de orden. Los archivos que no son PDF de órdenes de compra (no matchean el patrón configurado) se ignoran y quedan registrados en el log a nivel DEBUG; la cantidad total de archivos ignorados se informa en el INFO final.
 
 ### Extensión
 
 ```python
-# Por defecto: número de 5 dígitos al inicio del nombre, "|" separa campos, "=" separa clave de valor
+# Por defecto: solo "NNNNN.pdf", "|" separa campos, "=" separa clave de valor
 extractor = PurchaseOrderObservationsExtractor()
 
 # Personalizando patrón de orden y separadores del texto de Observaciones
 extractor = PurchaseOrderObservationsExtractor(
-    order_number_pattern=r"^([A-Z]{2}\d{3})",
+    order_number_pattern=r"^OC_(\d{5})\.pdf$",
     field_separator=";",
     key_value_separator=":",
 )
@@ -145,7 +147,7 @@ extractor = PurchaseOrderObservationsExtractor(
 
 ### Logging
 
-Usa el logger `purchase_toolkit.extract.purchase_order_pdf`, con niveles INFO/DEBUG/WARNING análogos a los de `merge` (ver [`merge/README.md`](../merge/README.md#logging)), más un WARNING específico cuando no se encuentra texto de Observaciones en un PDF. Al delegar el parseo en `ObservationsExtractor`, cada llamada a `extract_from_pdf` también emite los registros de ese logger (`purchase_toolkit.extract.observations`), descriptos en la sección [Logging](#logging) de `ObservationsExtractor` más arriba.
+Usa el logger `purchase_toolkit.extract.purchase_order_pdf`, con niveles INFO/DEBUG análogos a los de `merge` (ver [`merge/README.md`](../merge/README.md#logging)), salvo que los archivos ignorados por no ser PDF de órdenes de compra se registran a nivel DEBUG en vez de WARNING (es esperable que la carpeta tenga respaldos). Además emite un WARNING específico cuando no se encuentra texto de Observaciones en un PDF. Al delegar el parseo en `ObservationsExtractor`, cada llamada a `extract_from_pdf` también emite los registros de ese logger (`purchase_toolkit.extract.observations`), descriptos en la sección [Logging](#logging) de `ObservationsExtractor` más arriba.
 
 ### Manejo de errores
 
@@ -171,13 +173,13 @@ Extrae todos los pares `CLAVE=VALOR` presentes en el texto.
 
 ```python
 PurchaseOrderObservationsExtractor(
-    order_number_pattern: str = r"^(\d{5})",
+    order_number_pattern: str = r"(?i)^(\d{5})\.pdf$",
     field_separator: str = "|",
     key_value_separator: str = "=",
 )
 ```
 
-Constructor. Recibe el patrón de número de orden y los separadores usados internamente por `ObservationsExtractor`.
+Constructor. Recibe el patrón que reconoce el PDF de una orden y extrae su número, y los separadores usados internamente por `ObservationsExtractor`.
 
 ```python
 get_order_number(filename: str) -> str | None
@@ -201,4 +203,4 @@ Lee el PDF, localiza el texto de Observaciones y devuelve los campos extraídos.
 extract_from_folder(source_folder: Path) -> dict[str, dict[str, str]]
 ```
 
-Extrae los campos de Observaciones de todos los PDF de `source_folder`, agrupados por número de orden. Lanza `FileNotFoundError` si `source_folder` no existe.
+Extrae los campos de Observaciones de los PDF de órdenes de compra de `source_folder`, agrupados por número de orden. Lanza `FileNotFoundError` si `source_folder` no existe.

@@ -16,32 +16,37 @@ from purchase_toolkit.utils.pdf import (
 
 logger = logging.getLogger(__name__)
 
-# Línea de Observaciones embebida en el PDF: uno o más pares CLAVE=VALOR,
-# cada uno delimitado por "|" al principio y al final (ej. "| A=B | C=D |").
-_OBSERVATIONS_LINE_PATTERN = re.compile(r"^\s*\|.*\|\s*$")
-
 
 class PurchaseOrderObservationsExtractor:
     """Localiza y extrae el campo Observaciones desde el PDF de una orden de compra."""
 
     def __init__(
         self,
-        order_number_pattern: str = r"^(\d{5})",
+        order_number_pattern: str = r"(?i)^(\d{5})\.pdf$",
         field_separator: str = "|",
         key_value_separator: str = "=",
     ):
         """Inicializa el extractor.
 
         Args:
-            order_number_pattern: expresión regular usada para extraer el número
-                de orden de compra desde el nombre de archivo. Debe contener un
-                único grupo de captura con el número de orden.
+            order_number_pattern: expresión regular usada para reconocer el PDF
+                de una orden de compra y extraer su número desde el nombre de
+                archivo. Debe contener un único grupo de captura con el número
+                de orden. Por defecto solo matchea el archivo base de la orden
+                (ej. `10001.pdf`), no sus respaldos (ej. `10001_auth.pdf`).
             field_separator: carácter usado para separar los pares CLAVE=VALOR
                 dentro de una misma línea de Observaciones.
             key_value_separator: carácter usado para separar la clave del valor
                 dentro de un par.
         """
         self._order_number_pattern = order_number_pattern
+        # Línea de Observaciones embebida en el PDF: uno o más pares CLAVE=VALOR,
+        # delimitada por el separador de campo al principio y al final
+        # (ej. "| A=B | C=D |").
+        separator = re.escape(field_separator)
+        self._observations_line_pattern = re.compile(
+            rf"^\s*{separator}.*{separator}\s*$"
+        )
         self._observations_extractor = ObservationsExtractor(
             field_separator=field_separator,
             key_value_separator=key_value_separator,
@@ -64,7 +69,7 @@ class PurchaseOrderObservationsExtractor:
 
         Descarta todo el contenido del PDF que no tenga el formato
         `| CLAVE=VALOR | ... |` (líneas que empiezan y terminan con el
-        separador de campo).
+        separador de campo configurado).
 
         Args:
             pdf_text: texto completo extraído de un PDF (ver `utils.pdf.read_pdf_text`).
@@ -77,7 +82,7 @@ class PurchaseOrderObservationsExtractor:
         observation_lines = [
             line
             for line in pdf_text.splitlines()
-            if _OBSERVATIONS_LINE_PATTERN.match(line)
+            if self._observations_line_pattern.match(line)
         ]
         if not observation_lines:
             logger.warning("No se encontró texto de Observaciones en el PDF.")
@@ -98,11 +103,12 @@ class PurchaseOrderObservationsExtractor:
         return self._observations_extractor.extract(observations_text)
 
     def extract_from_folder(self, source_folder: Path) -> dict[str, dict[str, str]]:
-        """Extrae los campos de Observaciones de todos los PDF de una carpeta.
+        """Extrae los campos de Observaciones de los PDF de órdenes de una carpeta.
 
-        Los archivos se identifican por número de orden (ver `get_order_number`).
-        Un archivo cuyo nombre no coincide con el patrón esperado se ignora y
-        queda registrado en el log como advertencia.
+        Solo se procesan los PDF de órdenes de compra, reconocidos por nombre
+        de archivo (ver `get_order_number`). Los demás archivos (respaldos,
+        presupuestos, etc.) se ignoran y quedan registrados en el log a nivel
+        DEBUG.
 
         Args:
             source_folder: carpeta que contiene los PDF de órdenes de compra
@@ -129,8 +135,8 @@ class PurchaseOrderObservationsExtractor:
         for file in pdf_files:
             order_number = self.get_order_number(file.name)
             if order_number is None:
-                logger.warning(
-                    "Archivo ignorado, no matchea el patrón de orden: %s",
+                logger.debug(
+                    "Archivo ignorado, no es un PDF de orden de compra: %s",
                     file.name,
                 )
                 skipped_count += 1
